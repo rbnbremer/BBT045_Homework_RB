@@ -1,0 +1,265 @@
+###Record of utilized commands
+##1. Managing files
+#Download a reference yeast genome as compressed archive to the current directory
+wget https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz
+--2020-01-28 09:26:03--  https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz
+Resolving downloads.yeastgenome.org (downloads.yeastgenome.org)... 171.67.205.104
+Connecting to downloads.yeastgenome.org (downloads.yeastgenome.org)|171.67.205.104|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 17657104 (17M) [application/x-gzip]
+Saving to: ‘S288C_reference_genome_Current_Release.tgz’
+S288C_reference_genome_Current_Relea 100%[=====================================================================>]  16.84M  7.36MB/s    in 2.3s
+2020-01-28 09:26:06 (7.36 MB/s) - ‘S288C_reference_genome_Current_Release.tgz’ saved [17657104/17657104]
+
+#Decompress the archive (will create a new diretory)
+tar -xzvf S288C_reference_genome_Current_Release.tgz
+S288C_reference_genome_R64-2-1_20150113/
+S288C_reference_genome_R64-2-1_20150113/rna_coding_R64-2-1_20150113.fasta
+S288C_reference_genome_R64-2-1_20150113/NotFeature_R64-2-1_20150113.fasta
+S288C_reference_genome_R64-2-1_20150113/orf_coding_all_R64-2-1_20150113.fasta
+S288C_reference_genome_R64-2-1_20150113/other_features_genomic_R64-2-1_20150113.fasta
+S288C_reference_genome_R64-2-1_20150113/S288C_reference_sequence_R64-2-1_20150113.fsa
+S288C_reference_genome_R64-2-1_20150113/gene_association_R64-2-1_20150113.sgd
+S288C_reference_genome_R64-2-1_20150113/orf_trans_all_R64-2-1_20150113.fasta
+S288C_reference_genome_R64-2-1_20150113/saccharomyces_cerevisiae_R64-2-1_20150113.gff
+
+mv S288C_reference_genome_R64-2-1_20150113 data
+
+mkdir results
+
+touch results/counts.txt
+
+mv results results_2020_01_28
+
+
+##2. Analyzing files
+#wc - print newline, word, and byte counts for each file
+cd data/
+
+wc orf_coding_all_R64-2-1_20150113.fasta
+161265   446990 11491336 orf_coding_all_R64-2-1_20150113.fasta
+
+wc orf_trans_all_R64-2-1_20150113.fasta
+60443  344987 5328465 orf_trans_all_R64-2-1_20150113.fasta
+
+grep -c ">" orf_coding_all_R64-2-1_20150113.fasta
+6713
+
+grep -c ">" orf_coding_all_R64-2-1_20150113.fasta > ~/results_2020_01_28/counts.txt
+
+#Count how many tRNA genes are in rna_coding_R64-2-1_20150113.fasta, Save the results to counts.txt
+grep -c ">" rna_coding_R64-2-1_20150113.fasta >> ~/results_2020_01_28/counts.txt
+
+#Create a copy of counts.txt amd rename it counts.txt.orig
+cp ~/results_2020_01_28/counts.txt ~/results_2020_01_28/counts.txt.orig
+
+
+##3. Working with text columns
+cd
+
+mkdir working_with_text_columns
+
+cd working_with_text_columns
+
+#gene experssion data (fold change)
+wget https://web.archive.org/web/20130211035221/http://www.cbs.dtu.dk/courses/27619/ex1.dat
+--2020-01-31 17:03:32--  https://web.archive.org/web/20130211035221/http://www.cbs.dtu.dk/courses/27619/ex1.dat
+Resolving web.archive.org (web.archive.org)... 207.241.233.214
+Connecting to web.archive.org (web.archive.org)|207.241.233.214|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘ex1.dat’
+ex1.dat                            [ <=>                                                ]  37.55K  --.-KB/s    in 0.002s
+2020-01-31 17:03:34 (20.4 MB/s) - ‘ex1.dat’ saved [38455]
+
+# annotation
+wget https://web.archive.org/web/20170706124217/http://www.cbs.dtu.dk/courses/27619/ex1.acc
+--2020-01-31 17:05:22--  https://web.archive.org/web/20170706124217/http://www.cbs.dtu.dk/courses/27619/ex1.acc
+Resolving web.archive.org (web.archive.org)... 207.241.233.214
+Connecting to web.archive.org (web.archive.org)|207.241.233.214|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘ex1.acc’
+ex1.acc                            [ <=>                                                ]  39.11K  --.-KB/s    in 0s
+2020-01-31 17:05:23 (231 MB/s) - ‘ex1.acc’ saved [40046]
+
+paste ex1.acc ex1.dat > ~/working_with_text_columns/paste_ex1.acc_ex1.dat #Combines ex1.acc ex1.dat and stores the data set in the new file paste_ex1.acc_ex1.dat
+
+
+##4. Counting yeast-human orthologs
+cd
+
+mkdir 4
+
+cd 4
+
+wget http://eggnog5.embl.de/download/eggnog_5.0/per_tax_level/2759/2759_members.tsv.gz
+--2020-01-31 17:31:11--  http://eggnog5.embl.de/download/eggnog_5.0/per_tax_level/2759/2759_members.tsv.gz
+Resolving eggnog5.embl.de (eggnog5.embl.de)... 194.94.44.170
+Connecting to eggnog5.embl.de (eggnog5.embl.de)|194.94.44.170|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 40676403 (39M) [application/octet-stream]
+Saving to: ‘2759_members.tsv.gz’
+2759_members.tsv.gz            100%[===================================================>]  38.79M  55.4MB/s    in 0.7s
+2020-01-31 17:31:12 (55.4 MB/s) - ‘2759_members.tsv.gz’ saved [40676403/40676403]
+
+gunzip 2759_members.tsv.gz
+#2759_members.tsv info: Each row is an orthologous group. The 2nd column is the group ID and the 5th column contains the list of protein IDs contained in that group. The format of each protein ID is Taxon_ID.Sequence_ID (note the dot).
+
+grep "4891." 2759_members.tsv | cut -f 2 | sort > groups_scerevisiae.txt #Finds all lines contaning "4891." (Saccharomyces cerevisiae) | cuts out the second column | sorts the column and places the resulting data in .txt file
+grep "9606." 2759_members.tsv | cut -f 2 | sort > groups_hsapiens.txt #Finds all lines contaning "9606." (H. sapiens) | cuts out the second column | sorts the column and places the resulting data in .txt file
+
+comm -12 groups_hsapiens.txt groups_scerevisiae.txt | wc -l #counts number of rows with words in common
+838
+
+
+##5. Sequence Processing
+cd
+
+mkdir 5
+
+cd 5
+
+sed '/^>/!y/ACGT/UGCA/' ~/data/S288C_reference_sequence_R64-2-1_20150113.fsa > ~/5/S288C_reference_sequence_R64-2-1_20150113_comp_RNA.fsa
+
+sed '/^>/!y/ACGT/UGCA/' ~/data/orf_coding_all_R64-2-1_20150113.fasta > ~/5/orf_coding_all_R64-2-1_20150113_comp_RNA.fasta
+
+
+
+###7. Homework
+##Generating a directory
+cd
+
+mkdir homework
+
+cd homework
+
+##1. How many genes are on chromosome II in saccharomyces_cerevisiae_R64-2-1_20150113.gff? Note that the chromosome column is followed by a TAB charachter, which is encoded as \t
+##Generating subdirectory
+cd homework
+
+mkdir 1
+
+cd 1
+
+
+##Problem solving
+#.gff file type info: https://en.wikipedia.org/wiki/General_feature_format. SGD = Saccharomyces Genome Database. CDS = region of DNA that codes for protein.
+#Look for rows that contain both "chrII" and "*gene".
+
+grep -c -w "chrII" ~/data/saccharomyces_cerevisiae_R64-2-1_20150113.gff #Finds the rumber of rows that contain the isolated word "chrII".
+1557 #1557 entries for chrII. i.e., answer will be <= 1557.
+
+grep "chrII$(printf '\t')" ~/data/saccharomyces_cerevisiae_R64-2-1_20150113.gff | grep -c "gene$(printf '\t')" #Catches rows with feature names like  "transposable_element_gene" and "tRNA_gene" in addition to those with only "gene"
+479 #The answer.
+
+grep "chrII$(printf '\t')" ~/data/saccharomyces_cerevisiae_R64-2-1_20150113.gff | grep -c "gene$(printf '\t')" > ~/homework/1/counts_homework_1.txt #Saves the answer in counts_homework_1.txt
+
+
+##2. Count GC content in S288C_reference_sequence_R64-2-1_20150113.fsa
+##Generating subdirectory
+cd ~/homework/
+
+mkdir 2
+
+cd 2
+
+
+##Problem solving
+#.fsa file info: Contains complete reference sequences for the chromosomes and mitochondrion of Saccharomyces cerevisiae. E.g. for chrI: ref|NC_001133|(Reference sequence ID) [org=Saccharomyces cerevisiae] [strain=S288C] [moltype=genomic] [chromosome=I].
+#Count all occurences of GC while skipping rows starting with an ">".
+
+cp ~/data/S288C_reference_sequence_R64-2-1_20150113.fsa ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework.fsa #Creates a file copy to work on.
+
+sed '/^>/d' ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework.fsa > ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_infodel.fsa #Deletes file info rows (all start with ">").
+
+sed 's/g/G/g' ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_infodel.fsa | sed 's/c/C/g' > ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa #Replaces any g and c with G and C.
+
+tr -cd 'G' < ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa | wc -m > ~/homework/2/counts_homework_2.txt #-cd: -c => act on all but G. -d => delete. Deletes all characters except Gs, counts them (-m => count words), and inserts the count into ~/homework/2/counts_homework_2.txt. Does not change the data file.
+
+tr -cd 'C' < ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa | wc -m >> ~/homework/2/counts_homework_2.txt #-cd: -c => act on all but C. -d => delete. Deletes all characters except Cs, counts them (-m => count words), and adds the count into ~/homework/2/counts_homework_2.txt. Does not change the data file.
+
+#Answers
+#~/homework/2/counts_homework_2.txt contains total counts of 2317100 Gs and 2320576 Cs.
+
+wc -m ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa #Reports the total number of characters and filename.
+12359733 S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa 
+
+printf '%.4f\n' $(echo "(2317100+2320576)/12359733" | bc -l) #G+C quota.
+0.3752 #i.e. 37.52 %.
+
+printf '%.4f\n' $(echo "2317100/12359733" | bc -l) #G quota.
+0.1875 #i.e. 18.75 %.
+
+printf '%.4f\n' $(echo "2320576/12359733" | bc -l) #C quota.
+0.1878 #i.e. 18.78 %.
+
+
+##3. Download and decompress the ORFs of another strain (Y55) from https://downloads.yeastgenome.org/sequence/strains/Y55/Y55_SGD_2015_JRIF00000000/Y55_JRIF00000000_SGD_cds.fsa.gz
+##Generating subdirectory
+cd ~/homework/
+
+mkdir 3
+
+cd 3
+
+##Problem solving
+wget https://downloads.yeastgenome.org/sequence/strains/Y55/Y55_SGD_2015_JRIF00000000/Y55_JRIF00000000_SGD_cds.fsa.gz
+
+gunzip Y55_JRIF00000000_SGD_cds.fsa.gz
+
+
+##3a). Compare GC content in this file with the value in task 7.2. above (make sure you’re not also counting letters in the headers)
+cp ~/homework/3/Y55_JRIF00000000_SGD_cds.fsa ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa #Creates a file copy to work on.
+
+sed '/^>/d' ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa > ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_infodel.fsa #Deletes file info rows (all start with ">").
+
+sed 's/g/G/g' ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_infodel.fsa | sed 's/c/C/g' > ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_gctoGC.fsa #Replaces any g and c with G and C.
+
+tr -cd 'G' < ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_gctoGC.fsa | wc -m > ~/homework/3/counts_homework_3.txt #-cd: -c => act on all but G. -d => delete. Deletes all characters except Gs, counts them (-m => count words), and inserts the count into ~/homework/3/counts_homework_3.txt. Does not change the data file.
+
+tr -cd 'C' < ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_gctoGC.fsa | wc -m >> ~/homework/3/counts_homework_3.txt #-cd: -c => act on all but C. -d => delete. Deletes all characters except Cs, counts them (-m => count words), and adds the count into ~/homework/3/counts_homework_3.txt. Does not change the data file.
+
+#Answers
+#~/homework/3/counts_homework_3.txt contains total counts of 1658355 Gs and 1533622 Cs.
+
+wc -m ~/homework/3/Y55_JRIF00000000_SGD_cds_homework_gctoGC.fsa #Reports the total number of characters and filename.
+8248278 /home/student7/homework/3/Y55_JRIF00000000_SGD_cds_homework_gctoGC.fsa
+
+printf '%.4f\n' $(echo "(1658355+1533622)/8248278" | bc -l) #G+C quota.
+0.3870 #i.e. 38.70 % => marginally higher than 7.2.
+
+printf '%.4f\n' $(echo "1658355/8248278" | bc -l) #G quota.
+0.2011 #i.e. 20.11 % => marginally higher than 7.2.
+
+printf '%.4f\n' $(echo "1533622/8248278" | bc -l) #C quota.
+0.1859 #i.e. 18.59 % => about the same as 7.2.
+
+
+##3b). Compare number of ORFs in this strain (basically all the enties in the Y55 file you downloaded since that only contains ORFs) with the number in the reference genome (file orf_coding_all_R64-2-1_20150113.fasta)
+
+cp ~/homework/3/Y55_JRIF00000000_SGD_cds.fsa ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa #Creates a file copy to work on.
+
+grep -c ">" ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa #Reports the number of rows that start with a ">", which equates to the number of ORF in this file.
+5330 #Number of ORFs in Y55_JRIF00000000_SGD_cds_homework.fsa.
+
+cp ~/data/orf_coding_all_R64-2-1_20150113.fasta ~/homework/3/orf_coding_all_R64-2-1_20150113_homework.fasta #Creates a file copy to work on.
+
+grep -c -w "Verified ORF" ~/homework/3/orf_coding_all_R64-2-1_20150113_homework.fasta #Finds the rumber of rows that contain the "Verified ORF" marker.
+5111 #The number of ORFs, going by the "Verified ORF" marker. 
+
+echo "5330-5111" | bc
+219 #219 more in the Y55 strain.
+
+
+##3c).(INCOMPLETE) Count the common ORFs between this yeast strain and the reference we worked previously in sections 1 and 2. Note: remove strain suffixes from names in the non-reference strain.
+#Only comparison (that i could come up with and potetially do) is between [start - stop](saccharomyces_cerevisiae_R64-2-1_20150113.gff) and [start - stop]Y55_JRIF00000000_SGD_cds_homework.fsa.
+
+#Y55_JRIF00000000_SGD_cds_homework.fsa (First info string: >UNDEF_Y55 gi|696435221|gb|JRIF01000001.1| 1-1062 ORF Undefined)
+cp ~/homework/3/Y55_JRIF00000000_SGD_cds.fsa ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa #Creates a file copy to work on.
+grep ">" ~/homework/3/Y55_JRIF00000000_SGD_cds_homework.fsa | cut -d' ' -f 3 | sort > Y55_start_stop.txt
+
+#saccharomyces_cerevisiae_R64-2-1_20150113.gff
+cp ~/data/saccharomyces_cerevisiae_R64-2-1_20150113.gff ~/homework/3/saccharomyces_cerevisiae_R64-2-1_20150113_homework.gff #Creates a file copy to work on.
+#I was unable to use cut -f 4 ~/homework/3/saccharomyces_cerevisiae_R64-2-1_20150113_homework.gff and cut -f 5 ~/homework/3/saccharomyces_cerevisiae_R64-2-1_20150113_homework.gff to form [start-stop] data structure and insert it into R64-2-1_start_stop.txt here.
+#Would have then used comm Y55_start_stop.txt R64-2-1_start_stop.txt | wc -l to arrive at an answer.
