@@ -185,7 +185,7 @@ tr -cd 'C' < ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gct
 wc -m ~/homework/2/S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa #Reports the total number of characters and filename.
 12359733 S288C_reference_sequence_R64-2-1_20150113_homework_gctoGC.fsa 
 
-printf '%.4f\n' $(echo "(2317100+2320576)/12359733" | bc -l) #G+C quota.
+printf '%.4f\n' $(echo "(2317100+2320576)/12359733" | bc -l) #Calculates the G+C quota.
 0.3752 #i.e. 37.52 %.
 
 printf '%.4f\n' $(echo "2317100/12359733" | bc -l) #G quota.
